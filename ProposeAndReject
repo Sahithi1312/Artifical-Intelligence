@@ -1,0 +1,146 @@
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
+
+public class ProposeAndReject {
+
+	public static String allGirls[] = new String[]{ "bertha", "amy", "diane", "erika", "clare" };
+	
+	static String[] victor;
+
+	static String wyatt[],xavier[],yancey[],zeus[];
+	static String amy[],bertha[],clare[],diane[],erika[];
+	
+	static ArrayList<String> victorPref,wyattPref,xavierPref,yanceyPref,zeusPref;
+	static ArrayList<String> amyPref,berthaPref,clarePref,dianePref, erikaPref;
+	
+	static HashMap<String,List<String>> menMap;
+	static HashMap<String,List<String>> womenMap;
+	
+	static ArrayList<String> singleMen;
+	
+	static HashMap<String,String> pairing;
+	public static String past;
+	static boolean isSingleLeft;
+	static boolean orgerFlag;
+	
+	public static void propose(String[] allGuys){
+		
+		
+		victor = new String[]{ "bertha", "amy", "diane", "erika", "clare" };
+		wyatt = new String[]{ "diane", "bertha", "amy", "clare", "erika" };
+		xavier = new String[]{ "bertha", "Erika", "clare", "diane", "amy" };
+		yancey = new String[]{ "amy", "diane", "clare", "bertha", "erika"};
+		zeus = new String[]{ "bertha", "diane", "amy", "erika", "clare" };
+		
+		amy = new String[]{ "zeus", "victor", "wyatt", "yancey", "xavier" };
+		bertha = new String[]{ "xavier", "wyatt", "yancey", "victor", "zeus" };
+		clare = new String[]{ "wyatt", "xavier", "yancey", "zeus", "victor" };
+		diane = new String[]{ "victor", "zeus", "yancey", "xavier", "wyatt" };
+		erika = new String[]{ "yancey", "wyatt", "zeus", "xavier", "clare" };
+		
+		
+		victorPref=new ArrayList<String>(Arrays.asList(victor));
+		wyattPref=new ArrayList<String>(Arrays.asList(wyatt));
+		xavierPref=new ArrayList<String>(Arrays.asList(xavier));
+		yanceyPref=new ArrayList<String>(Arrays.asList(yancey));
+		zeusPref=new ArrayList<String>(Arrays.asList(zeus));
+		
+		amyPref=new ArrayList<String>(Arrays.asList(amy));
+		berthaPref=new ArrayList<String>(Arrays.asList(bertha));
+		clarePref=new ArrayList<String>(Arrays.asList(clare));
+		dianePref=new ArrayList<String>(Arrays.asList(diane));
+		erikaPref=new ArrayList<String>(Arrays.asList(erika));
+		
+		menMap=new HashMap<String, List<String>>();
+		menMap.put("victor", victorPref);
+		menMap.put("wyatt", wyattPref);
+		menMap.put("xavier", xavierPref);
+		menMap.put("yancey", yanceyPref);
+		menMap.put("zeus", zeusPref);
+		
+		womenMap=new HashMap<String, List<String>>();
+		womenMap.put("amy", amyPref);
+		womenMap.put("bertha", berthaPref);
+		womenMap.put("clare", clarePref);
+		womenMap.put("diane", dianePref);
+		womenMap.put("erika", erikaPref);
+		
+		singleMen=new ArrayList<String>(Arrays.asList(allGuys));
+		
+		if( allGuys[0] != null && allGuys[0].contains("zeus")){
+			
+			orgerFlag = true;
+		
+		}
+		
+		pairing = new HashMap<String,String>();
+		isSingleLeft=true;
+
+		String target = null;
+		
+		while(isSingleLeft) {
+			
+			
+
+			String guysProposing = singleMen.remove(0);
+		    List<String> guysList = menMap.get(guysProposing);
+            target = guysList.remove(0);
+		   
+            menMap.put(guysProposing, guysList);
+		    
+		    if (pairing.get(target)==null) {
+		    	
+		    	pairing.put(target, guysProposing);
+		    	
+			}
+		    
+		    else if (womenMap.get(target).indexOf(guysProposing)<womenMap.get(target).indexOf(pairing.get(target))) {
+		    	
+		    	singleMen.add(pairing.get(target));
+		    		pairing.put(target, guysProposing);
+		    		
+			}
+		    
+		    else if (womenMap.get(target).indexOf(guysProposing)>womenMap.get(target).indexOf(pairing.get(target)))
+	    	{
+		    	singleMen.add(guysProposing);
+	    	}
+		    if (singleMen.isEmpty()) {
+				isSingleLeft=false;
+			}
+		    
+		}
+		
+		if(orgerFlag){
+			
+			System.out.println("Final Pairing when propossed in the Zeus to Victor order " + pairing);
+			System.out.println("");
+			
+		}
+		
+		else{
+			
+			System.out.println("Final Pairing when propossed in the Victor to Zeus order " + pairing);
+			System.out.println("");
+
+		}
+		
+		
+	}
+	
+public static void main(String[] args) {
+		
+		String[] VToZ = new String[]{ "victor", "wyatt", "xavier", "yancey",  "zeus" };
+		
+		String[] ZToV = new String[]{ "zeus", "yancey", "xavier", "wyatt" , "victor"};
+		
+		ProposeAndReject.propose(VToZ);
+		
+		ProposeAndReject.propose(ZToV);
+		
+	}
+}
