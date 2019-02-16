@@ -1,0 +1,164 @@
+import java.util.Vector;
+
+public abstract class State 
+{
+
+  public abstract boolean equals(State state);
+  public abstract String toString();
+  public abstract int estimate(State goal);
+  public abstract Vector<State> successors();
+
+}  
+
+
+
+import java.util.Collection;
+import java.util.Vector;
+
+public class EightPuzzle extends State 
+{
+
+	static int heuristic = 0; 
+	public int[] value;
+
+	// CONSTRUCTOR
+	public EightPuzzle(int[] v) 
+	{
+		value = v;
+	}
+
+	public boolean equals(State state) 
+	{
+		EightPuzzle s = (EightPuzzle)state;
+		boolean flag = true;
+		for (int i = 0; i < 9; i++) 
+				if (value[i] != s.value[i]) flag = false;
+		return flag;
+	}
+
+	public String toString() 
+	{
+		String s = "(";
+		for (int i = 0; i < 9; i++)
+			s = s + value[i] + ",";    
+		return s + "\b)";
+	}
+
+    public Vector<State> successors() 
+    {
+    	Vector<State> s = new Vector<State>();
+    	int hole = 0;
+    	
+    	for (int i = 0; i < 9; i++) 
+    		if (value[i] == 0) hole = i;
+    	
+    	// move up OK?
+    	if ((hole / 3) > 0) addSuccessor(hole, hole - 3, s, value);
+	 
+    	// move down OK?
+    	if ((hole / 3) < 2) addSuccessor(hole, hole + 3, s, value);
+	 
+    	// move left OK?
+    	if ((hole % 3) > 0) addSuccessor(hole, hole - 1, s, value);
+	 
+    	// move right OK?
+    	if ((hole % 3) < 2) addSuccessor(hole, hole + 1, s, value);
+	 
+    	return s;
+    }
+
+    private void addSuccessor(int old_loc, int new_loc, Vector<State> v, int[] old) 
+    {
+    	int[] val = (int[])old.clone();
+    	val[old_loc] = val[new_loc];
+    	val[new_loc] = 0;
+    	v.addAll(0, (Collection<? extends State>) new EightPuzzle(val)); 
+    }
+
+    public int estimate(State goal) 
+    {
+    	EightPuzzle goalstate = (EightPuzzle)goal;
+    	int est = 0;
+    	
+    	if (heuristic == 0) est = heuristic0(goalstate);
+    	else if (heuristic == 1) est = heuristic1(goalstate);
+    	else if (heuristic == 2) est = heuristic2(goalstate);
+    	else if (heuristic == 3) est = heuristic3(goalstate);
+    	else if (heuristic == 4) est = heuristic4(goalstate);
+	 
+    	return est;
+  }
+
+   private int heuristic0(EightPuzzle goalstate) 
+   {
+	 return 0;
+   }
+
+   private int heuristic1(EightPuzzle goalstate) 
+   {
+	   int[] goal = goalstate.value;
+	   int misplaced = 0;
+	   for (int i = 0; i < 9; i++) 
+		   if (goal[i] != value[i]) misplaced++;
+	   return misplaced;
+  }
+
+   private int heuristic2(EightPuzzle goalstate) 
+   {
+	   	int[] goal = goalstate.value;
+	 	int distance = 0;
+	 	for (int i = 0; i < 9; i++) 
+	 	{
+	 		int c = value[i];
+	 		int v = 0;
+	 		for (int j = 0; j < 9; j++)
+	 			if (c == goal[j]) v = j;
+			if (c != 0)
+				distance = distance + 
+				Math.abs((i % 3) - (v % 3)) +  
+				Math.abs((i / 3) - (v / 3));   
+	 	}
+	 	return distance;
+   }
+  
+   private int heuristic3(EightPuzzle goalstate) 
+   {
+	   int[] goal = goalstate.value;
+	   int distance = 0;
+	   for (int i = 0; i < 9; i++) 
+	   {
+		   int c = value[i];
+		   int v = 0;
+		   for (int j = 0; j < 9; j++) 
+			   if (c == goal[j]) v = j;
+		
+		   if (c != 0)
+			   distance = distance + 
+			   Math.abs((i % 3) - (v % 3)) +  
+			   Math.abs((i / 3) - (v / 3));   
+	   }
+	   return 2*distance;
+   }
+
+   private int heuristic4(EightPuzzle goalstate) 
+   {
+	   int[] goal = goalstate.value;
+	   int distance = 0;
+	   for (int i = 0; i < 9; i++) 
+	   {
+		   int c = value[i];
+		   int v = 0;
+		   for (int j = 0; j < 9; j++) 
+			   if (c == goal[j]) v = j;
+		
+		   if (c != 0) 
+		   {
+			   int xd = Math.abs((i % 3) - (v % 3));
+			   int yd = Math.abs((i / 3) - (v / 3));
+			   distance = distance + (xd * xd) + (yd * yd);
+		   }
+	   }
+	   return distance;
+   }
+
+}  
